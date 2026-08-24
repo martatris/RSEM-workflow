@@ -46,23 +46,31 @@ The first example uses the bfi dataset.
 
 A subset of 250 observations is selected:
 
+```
 bfi2 <- bfi[1:250, c(1:5, 18, 22)]
+```
 
 The first variable is reverse-scored:
 
+```
 bfi2[, 1] <- reverse.code(-1, bfi2[, 1])
+```
 
 A one-factor CFA model is specified:
 
+```
 mod <- "
   f1 =~ NA*A1 + A2 + A3 + A4 + A5 + O2 + N3
   f1 ~~ 1*f1
 "
+```
 
 The model is estimated using lavaan:
 
+```
 out <- cfa(mod, data = bfi2)
 summary(out)
+```
 
 The latent factor f1 is measured by:
 
@@ -84,10 +92,13 @@ The CFA model is used as the starting point for regularized SEM.
 
 Model matrices can be inspected with:
 
+```
 extractMatrices(out)$A
+```
 
 A LASSO-regularized model is estimated using cross-validation:
 
+```
 out.reg <- cv_regsem(
   out,
   type = "lasso",
@@ -95,6 +106,7 @@ out.reg <- cv_regsem(
   n.lambda = 25,
   jump = 0.05
 )
+```
 
 LASSO REGULARIZATION
 
@@ -102,20 +114,25 @@ LASSO applies a penalty to selected parameters. This can shrink weak parameters 
 
 Results can be inspected with:
 
+```
 summary(out.reg)
 
 head(round(out.reg$parameters, 2), 5)
 
 head(round(out.reg$fits, 2))
+```
 
 The regularization path can be visualized using BIC:
 
+```
 plot(out.reg, show.minimum = "BIC")
+```
 
 The final selected parameters are available through:
 
+```
 out.reg$final_pars
-
+```
 
 3. LATENT GROWTH CURVE MODEL
 ----------------------------
@@ -124,6 +141,7 @@ The second example creates simulated longitudinal data for 200 observations.
 
 Four repeated measurements are generated:
 
+```
 dat_growth <- data.frame(
   x1 = rnorm(200, 50, 10),
   x2 = rnorm(200, 52, 10),
@@ -131,10 +149,13 @@ dat_growth <- data.frame(
   x4 = rnorm(200, 58, 10),
   matrix(rnorm(200 * 10), ncol = 10)
 )
+```
 
 Ten additional variables are created as covariates:
 
+```
 names(dat_growth)[5:14] <- paste0("c", 1:10)
+```
 
 The resulting dataset contains:
 
@@ -149,6 +170,7 @@ The latent growth model contains two latent factors:
 - i = intercept
 - s = slope
 
+```
 mod1 <- "
   i =~ 1*x1 + 1*x2 + 1*x3 + 1*x4
 
@@ -158,7 +180,7 @@ mod1 <- "
 
   s ~ c1 + c2 + c3 + c4 + c5 + c6 + c7 + c8 + c9 + c10
 "
-
+```
 The intercept factor represents the overall level across the four measurement occasions.
 
 The slope factor represents linear change over time:
@@ -175,6 +197,7 @@ The ten covariates are used to predict both:
 
 The model is estimated with:
 
+```
 lav.growth <- growth(
   mod1,
   data = dat_growth,
@@ -182,7 +205,7 @@ lav.growth <- growth(
 )
 
 summary(lav.growth)
-
+```
 
 METHODS
 -------
